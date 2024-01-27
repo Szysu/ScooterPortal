@@ -1,8 +1,34 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScooterPortal.ApiService", "src\ScooterPortal.ApiService\ScooterPortal.ApiService.csproj", "{37844214-831D-45DA-B83C-DEC1A858E2BA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScooterPortal.AppHost", "src\ScooterPortal.AppHost\ScooterPortal.AppHost.csproj", "{53F09438-4E84-40EC-97B4-C55C48C2AAD1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScooterPortal.ServiceDefaults", "src\ScooterPortal.ServiceDefaults\ScooterPortal.ServiceDefaults.csproj", "{2D858631-344F-43A9-9190-B3BC1A98B36C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScooterPortal.Web", "src\ScooterPortal.Web\ScooterPortal.Web.csproj", "{E2C51315-0A34-48B9-A419-BA14936BC43D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{37844214-831D-45DA-B83C-DEC1A858E2BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37844214-831D-45DA-B83C-DEC1A858E2BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37844214-831D-45DA-B83C-DEC1A858E2BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37844214-831D-45DA-B83C-DEC1A858E2BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53F09438-4E84-40EC-97B4-C55C48C2AAD1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53F09438-4E84-40EC-97B4-C55C48C2AAD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53F09438-4E84-40EC-97B4-C55C48C2AAD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53F09438-4E84-40EC-97B4-C55C48C2AAD1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D858631-344F-43A9-9190-B3BC1A98B36C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D858631-344F-43A9-9190-B3BC1A98B36C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D858631-344F-43A9-9190-B3BC1A98B36C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D858631-344F-43A9-9190-B3BC1A98B36C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E2C51315-0A34-48B9-A419-BA14936BC43D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2C51315-0A34-48B9-A419-BA14936BC43D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2C51315-0A34-48B9-A419-BA14936BC43D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2C51315-0A34-48B9-A419-BA14936BC43D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
