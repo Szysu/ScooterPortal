@@ -1,4 +1,6 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using ScooterPortal.ApiService.Services;
+
+var builder = WebApplication.CreateBuilder(args);
 
 // Add service defaults & Aspire components.
 builder.AddServiceDefaults();
@@ -10,16 +12,14 @@ builder.AddSqlServerDbContext<DatabaseContext>("ScooterPortal",
     });
 
 // Add services to the container.
-builder.Services.AddProblemDetails();
+builder.Services.AddFastEndpoints();
+builder.Services.AddSingleton<JwtGenerator>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-app.UseExceptionHandler();
+// Configure services.
+app.UseFastEndpoints();
 
-app.MapDefaultEndpoints();
-
-// Migrate the database.
-app.MigrateDbContext<DatabaseContext>();
+app.MigrateDatabase();
 
 app.Run();

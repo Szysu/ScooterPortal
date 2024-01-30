@@ -20,5 +20,7 @@ public class AdministratorEntityConfiguration : IEntityTypeConfiguration<Adminis
 
         builder.Property(x => x.Password)
             .IsRequired();
+
+        builder.Ignore(x => x.FullName);
     }
 }
