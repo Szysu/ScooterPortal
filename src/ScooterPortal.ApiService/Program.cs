@@ -1,4 +1,6 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using ScooterPortal.ApiService.Services;
+
+var builder = WebApplication.CreateBuilder(args);
 
 // Add service defaults & Aspire components.
 builder.AddServiceDefaults()
@@ -14,6 +16,9 @@ builder.Services
     .AddFastEndpoints()
     .AddJWTBearerAuth(builder.Configuration["JwtKey"]!)
     .AddAuthorization();
+
+builder.Services
+    .AddScoped<ScooterCommandService>();
 
 var app = builder.Build();
 
