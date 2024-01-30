@@ -1,10 +1,10 @@
 ﻿using FluentValidation;
 
-namespace ScooterPortal.ApiService.Endpoints.Repairs.AddRepair;
+namespace ScooterPortal.ApiService.Endpoints.Repairs.CreateRepair;
 
-public class AddRepairRequestValidator : Validator<AddRepairRequest>
+public class CreateRepairRequestValidator : Validator<CreateRepairRequest>
 {
-    public AddRepairRequestValidator()
+    public CreateRepairRequestValidator()
     {
         RuleFor(x => x.ScooterId)
             .NotEmpty();

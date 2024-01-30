@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using ScooterPortal.ApiService.EntityConfiguration;
+﻿using ScooterPortal.ApiService.EntityConfiguration;
 
 namespace ScooterPortal.ApiService;
 

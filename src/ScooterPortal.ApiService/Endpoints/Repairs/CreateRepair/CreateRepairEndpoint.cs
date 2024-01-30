@@ -1,8 +1,8 @@
 ﻿using ScooterPortal.ApiService.Endpoints.Repairs.GetRepairDetails;
 
-namespace ScooterPortal.ApiService.Endpoints.Repairs.AddRepair;
+namespace ScooterPortal.ApiService.Endpoints.Repairs.CreateRepair;
 
-public class AddRepairEndpoint : Endpoint<AddRepairRequest>
+public class CreateRepairEndpoint : Endpoint<CreateRepairRequest>
 {
     public DatabaseContext DbContext { get; set; } = null!;
 
@@ -11,7 +11,7 @@ public class AddRepairEndpoint : Endpoint<AddRepairRequest>
         Post("repairs");
     }
 
-    public override Task HandleAsync(AddRepairRequest req, CancellationToken ct)
+    public override Task HandleAsync(CreateRepairRequest req, CancellationToken ct)
     {
         if (!DbContext.Scooters.Any(x => x.Id == req.ScooterId))
         {

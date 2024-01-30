@@ -9,7 +9,7 @@ public class GetRepairDetailsEndpoint : EndpointWithoutRequest<GetRepairDetailsR
         Get("repairs/{id}");
     }
 
-    public override async Task HandleAsync(CancellationToken ct)
+    public override Task HandleAsync(CancellationToken ct)
     {
         var repairId = Route<int>("id");
         var response = DbContext.Repairs
@@ -30,12 +30,8 @@ public class GetRepairDetailsEndpoint : EndpointWithoutRequest<GetRepairDetailsR
             })
             .FirstOrDefault();
 
-        if (response is null)
-        {
-            await SendNotFoundAsync(ct);
-            return;
-        }
-
-        await SendOkAsync(response, ct);
+        return response is null
+            ? SendNotFoundAsync(ct)
+            : SendOkAsync(response, ct);
     }
 }

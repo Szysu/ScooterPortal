@@ -9,22 +9,21 @@ public class UpdateScooterEndpoint : Endpoint<UpdateScooterRequest>
         Put("scooters/{id}");
     }
 
-    public override async Task HandleAsync(UpdateScooterRequest req, CancellationToken ct)
+    public override Task HandleAsync(UpdateScooterRequest req, CancellationToken ct)
     {
         var scooterId = Route<int>("id");
         var scooter = DbContext.Scooters.FirstOrDefault(x => x.Id == scooterId);
 
         if (scooter is null)
         {
-            await SendNotFoundAsync(ct);
-            return;
+            return SendNotFoundAsync(ct);
         }
 
         scooter.Model = req.Model;
         scooter.Manufacturer = req.Manufacturer;
         scooter.BatteryLevel = req.BatteryLevel;
 
-        await DbContext.SaveChangesAsync(ct);
-        await SendNoContentAsync(ct);
+        DbContext.SaveChanges();
+        return SendNoContentAsync(ct);
     }
 }

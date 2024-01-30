@@ -9,7 +9,7 @@ public class GetCustomerDetailsEndpoint : EndpointWithoutRequest<GetCustomerDeta
         Get("customers/{id}");
     }
 
-    public override async Task HandleAsync(CancellationToken ct)
+    public override Task HandleAsync(CancellationToken ct)
     {
         var customerId = Route<int>("id");
         var response = DbContext.Customers
@@ -29,12 +29,8 @@ public class GetCustomerDetailsEndpoint : EndpointWithoutRequest<GetCustomerDeta
             })
             .FirstOrDefault();
 
-        if (response is null)
-        {
-            await SendNotFoundAsync(ct);
-            return;
-        }
-
-        await SendOkAsync(response, ct);
+        return response is null
+            ? SendNotFoundAsync(ct)
+            : SendOkAsync(response, ct);
     }
 }

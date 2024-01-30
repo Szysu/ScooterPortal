@@ -9,7 +9,7 @@ public class GetScooterDetailsEndpoint : EndpointWithoutRequest<GetScooterDetail
         Get("scooters/{id}");
     }
 
-    public override async Task HandleAsync(CancellationToken ct)
+    public override Task HandleAsync(CancellationToken ct)
     {
         var scooterId = Route<int>("id");
         var response = DbContext.Scooters
@@ -37,12 +37,8 @@ public class GetScooterDetailsEndpoint : EndpointWithoutRequest<GetScooterDetail
             })
             .FirstOrDefault();
 
-        if (response is null)
-        {
-            await SendNotFoundAsync(ct);
-            return;
-        }
-
-        await SendOkAsync(response, ct);
+        return response is null
+            ? SendNotFoundAsync(ct)
+            : SendOkAsync(response, ct);
     }
 }

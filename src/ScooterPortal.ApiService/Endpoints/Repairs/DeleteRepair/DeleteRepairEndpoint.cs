@@ -9,20 +9,19 @@ public class DeleteRepairEndpoint : EndpointWithoutRequest
         Delete("repairs/{id}");
     }
 
-    public override async Task HandleAsync(CancellationToken ct)
+    public override Task HandleAsync(CancellationToken ct)
     {
         var repairId = Route<int>("id");
         var repair = DbContext.Repairs.FirstOrDefault(x => x.Id == repairId);
 
         if (repair is null)
         {
-            await SendNotFoundAsync(ct);
-            return;
+            return SendNotFoundAsync(ct);
         }
 
         DbContext.Repairs.Remove(repair);
-        await DbContext.SaveChangesAsync(ct);
+        DbContext.SaveChanges();
 
-        await SendNoContentAsync(ct);
+        return SendNoContentAsync(ct);
     }
 }

@@ -1,6 +1,6 @@
-﻿namespace ScooterPortal.ApiService.Endpoints.Repairs.AddRepair;
+﻿namespace ScooterPortal.ApiService.Endpoints.Repairs.CreateRepair;
 
-public record AddRepairRequest
+public record CreateRepairRequest
 {
     public required int ScooterId { get; init; }
     public required string Reason { get; init; }
