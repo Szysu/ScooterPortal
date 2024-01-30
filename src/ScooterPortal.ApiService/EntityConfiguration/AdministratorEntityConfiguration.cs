@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace ScooterPortal.ApiService.EntityConfiguration;
 
@@ -20,7 +19,5 @@ public class AdministratorEntityConfiguration : IEntityTypeConfiguration<Adminis
 
         builder.Property(x => x.Password)
             .IsRequired();
-
-        builder.Ignore(x => x.FullName);
     }
 }

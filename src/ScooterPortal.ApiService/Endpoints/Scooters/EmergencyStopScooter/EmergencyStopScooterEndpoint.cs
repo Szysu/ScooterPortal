@@ -1,6 +1,6 @@
 ﻿using ScooterPortal.ApiService.Services;
 
-namespace ScooterPortal.ApiService.Endpoints;
+namespace ScooterPortal.ApiService.Endpoints.Scooters.EmergencyStopScooter;
 
 public class EmergencyStopScooterEndpoint : EndpointWithoutRequest
 {

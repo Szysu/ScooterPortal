@@ -1,4 +1,4 @@
-﻿namespace ScooterPortal.ApiService.Endpoints;
+﻿namespace ScooterPortal.ApiService.Endpoints.Scooters.GetScooterDetails;
 
 public class GetScooterDetailsEndpoint : EndpointWithoutRequest<GetScooterDetailsResponse>
 {

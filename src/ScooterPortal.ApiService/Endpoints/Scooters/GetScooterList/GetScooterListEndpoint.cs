@@ -1,4 +1,4 @@
-﻿namespace ScooterPortal.ApiService.Endpoints;
+﻿namespace ScooterPortal.ApiService.Endpoints.Scooters.GetScooterList;
 
 public class GetScooterListEndpoint : EndpointWithoutRequest<List<ScooterDto>>
 {
