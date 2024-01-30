@@ -19,6 +19,11 @@ public class UpdateRepairEndpoint : Endpoint<UpdateRepairRequest>
             return SendNotFoundAsync(ct);
         }
 
+        if (!DbContext.Scooters.Any(x => x.Id == req.ScooterId))
+        {
+            ThrowError(r => r.ScooterId, "Scooter not found");
+        }
+
         repair.Reason = req.Reason;
         repair.StartDate = req.StartDate;
         repair.EndDate = req.EndDate;

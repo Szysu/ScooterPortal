@@ -6,6 +6,9 @@ public class UpdateRepairRequestValidator : Validator<UpdateRepairRequest>
 {
     public UpdateRepairRequestValidator()
     {
+        RuleFor(x => x.ScooterId)
+            .NotEmpty();
+
         RuleFor(x => x.Reason)
             .NotEmpty()
             .MaximumLength(200);
