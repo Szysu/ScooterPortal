@@ -1,0 +1,136 @@
+﻿@page "/Repairs"
+@rendermode InteractiveAuto
+
+<MudDataGrid CommittedItemChanges="repair => RowEdited(repair)"
+			 EditMode="DataGridEditMode.Form"
+			 EditTrigger="DataGridEditTrigger.Manual"
+			 Filterable="true"
+			 Items="@Elements"
+			 ReadOnly="false"
+			 SortMode="SortMode.Single"
+			 T="RepairElement"
+			 Virtualize="true">
+	<ToolBarContent>
+		<MudButton Color="Color.Primary"
+				   OnClick="() => AddRow()"
+				   Size="Size.Medium"
+				   StartIcon="@Icons.Material.Filled.Add"
+				   Variant="Variant.Filled">
+			Dodaj
+		</MudButton>
+	</ToolBarContent>
+	<Columns>
+		<PropertyColumn IsEditable="false"
+						Property="x => x.Id"
+						Title="Id"/>
+		<PropertyColumn Property="x => x.ScooterId"
+						Title="Id pojazdu"/>
+		<PropertyColumn Property="x => x.Reason"
+						Title="Powód"/>
+		<PropertyColumn Property="x => x.StartDate"
+						Title="Data rozpoczęcia">
+			<EditTemplate>
+				<MudDatePicker @bind-Date="context.Item.StartDate"
+							   Required
+							   Label="Data rozpoczęcia"/>
+				<MudTimePicker @bind-Time="context.Item.StartTime"
+							   Required
+							   Label="Czas rozpoczęcia"/>
+			</EditTemplate>
+		</PropertyColumn>
+		<PropertyColumn Property="x => x.EndDate"
+						Title="Data zakończenia">
+			<EditTemplate>
+				<MudDatePicker @bind-Date="context.Item.EndDate" Label="Data zakończenia"/>
+				<MudTimePicker @bind-Time="context.Item.EndTime" Label="Czas zakończenia"/>
+			</EditTemplate>
+		</PropertyColumn>
+		<TemplateColumn CellClass="d-flex justify-end"
+						Filterable="false"
+						Sortable="false">
+			<CellTemplate>
+				<MudIconButton Icon="@Icons.Material.Filled.Edit"
+							   OnClick="@context.Actions.StartEditingItemAsync"
+							   Size="Size.Small"/>
+				<MudIconButton Icon="@Icons.Material.Filled.Delete"
+							   OnClick="@(() => RowDeleted(context.Item))"
+							   Size="Size.Small"/>
+			</CellTemplate>
+		</TemplateColumn>
+	</Columns>
+</MudDataGrid>
+
+@code
+{
+	[Inject]
+	private ApiClient ApiClient { get; set; } = null!;
+
+	private List<RepairElement> Elements { get; set; } = [];
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (!firstRender)
+		{
+			return;
+		}
+
+		Elements = await ApiClient.Request("repairs")
+			.GetAsync()
+			.ReceiveJson<List<RepairElement>>();
+
+		StateHasChanged();
+	}
+
+	private async Task RowEdited(RepairElement repair)
+	{
+		if (repair.Saved)
+		{
+			await ApiClient.Request("repairs")
+				.AppendPathSegment(repair.Id)
+				.PutJsonAsync(new
+				{
+					repair.ScooterId,
+					repair.Reason,
+					StartDate = repair.StartDate + repair.StartTime,
+					EndDate = repair.EndDate + repair.EndTime
+				});
+			return;
+		}
+
+		var response = await ApiClient.Request("repairs")
+			.PostJsonAsync(new
+			{
+				repair.ScooterId,
+				repair.Reason,
+				StartDate = repair.StartDate + repair.StartTime,
+				EndDate = repair.EndDate + repair.EndTime
+			});
+
+		var newRepair = await ApiClient.Request(response.Headers.FirstOrDefault("Location"))
+			.GetAsync()
+			.ReceiveJson<RepairElement>();
+
+		var repairIndex = Elements.IndexOf(repair);
+		Elements[repairIndex] = newRepair;
+	}
+
+	private async Task RowDeleted(RepairElement repair)
+	{
+		Elements.Remove(repair);
+
+		if (repair.Saved)
+		{
+			await ApiClient.Request("repairs")
+				.AppendPathSegment(repair.Id)
+				.DeleteAsync();
+		}
+	}
+
+	private void AddRow()
+	{
+		Elements.Add(new()
+		{
+			Saved = false
+		});
+	}
+}

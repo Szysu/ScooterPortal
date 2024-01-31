@@ -1,29 +1,29 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page">
-	<div class="sidebar">
-		<NavMenu/>
-	</div>
+<MudThemeProvider @rendermode="InteractiveAuto"/>
+<MudDialogProvider @rendermode="InteractiveAuto"/>
+<MudSnackbarProvider @rendermode="InteractiveAuto"/>
 
-	<main>
-		<div class="px-4 top-row">
-			<a href="https://learn.microsoft.com/aspnet/core/"
-			   target="_blank">
-				About
-			</a>
-		</div>
-
-		<article class="content px-4">
-			@Body
-		</article>
-	</main>
-</div>
-
-<div id="blazor-error-ui">
-	An unhandled error has occurred.
-	<a class="reload"
-	   href="">
-		Reload
-	</a>
-	<a class="dismiss">🗙</a>
-</div>
+<MudLayout>
+	<MudAppBar Elevation="1">
+		<MudText Class="ml-3"
+				 Typo="Typo.h5">
+			Scooter Portal
+		</MudText>
+		<MudSpacer/>
+	</MudAppBar>
+	<MudDrawer Open="true"
+			   ClipMode="DrawerClipMode.Always"
+			   Elevation="2">
+		<MudNavMenu Margin="Margin.Normal">
+			<MudNavLink Href="/Map" Icon="@Icons.Material.Filled.Map">Mapa</MudNavLink>
+			<MudNavLink Href="/Scooters" Icon="@Icons.Material.Filled.ElectricScooter">Pojazdy</MudNavLink>
+			<MudNavLink Href="/Customers" Icon="@Icons.Material.Filled.People">Klienci</MudNavLink>
+			<MudNavLink Href="/Rentals" Icon="@Icons.Material.Filled.History">Wypożyczenia</MudNavLink>
+			<MudNavLink Href="/Repairs" Icon="@Icons.Material.Filled.HomeRepairService">Naprawy</MudNavLink>
+		</MudNavMenu>
+	</MudDrawer>
+	<MudMainContent>
+		@Body
+	</MudMainContent>
+</MudLayout>

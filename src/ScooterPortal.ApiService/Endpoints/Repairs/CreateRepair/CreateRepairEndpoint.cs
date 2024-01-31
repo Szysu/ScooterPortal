@@ -30,6 +30,6 @@ public class CreateRepairEndpoint : Endpoint<CreateRepairRequest>
         DbContext.Repairs.Add(repair);
         DbContext.SaveChanges();
 
-        return SendCreatedAtAsync<GetRepairDetailsEndpoint>(repair.Id, null, cancellation: ct);
+        return SendCreatedAtAsync<GetRepairDetailsEndpoint>(new RouteValueDictionary { { "id", repair.Id } }, null, cancellation: ct);
     }
 }

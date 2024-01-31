@@ -24,6 +24,6 @@ public class CreateScooterEndpoint : Endpoint<CreateScooterRequest>
         DbContext.Scooters.Add(scooter);
         DbContext.SaveChanges();
 
-        return SendCreatedAtAsync<GetScooterDetailsEndpoint>(scooter.Id, null, cancellation: ct);
+        return SendCreatedAtAsync<GetScooterDetailsEndpoint>(new RouteValueDictionary { { "id", scooter.Id } }, null, cancellation: ct);
     }
 }

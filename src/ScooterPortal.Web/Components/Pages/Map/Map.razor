@@ -1,0 +1,20 @@
+﻿@page "/Map"
+@rendermode InteractiveAuto
+
+<MudGrid Spacing="0">
+	<MudItem xs="12">
+		<MudPaper Class="align-center d-flex justify-center mud-with-full py-6">
+			<MudText Typo="Typo.h4">Moduł oczekuje na implementację</MudText>
+		</MudPaper>
+	</MudItem>
+	<MudItem xs="12">
+		<SfMaps Height="80vh">
+			<MapsZoomSettings Enable="true" ZoomFactor="12" MinZoom="2" MaxZoom="20"/>
+			<MapsLayers>
+				<MapsLayer UrlTemplate="https://tile.openstreetmap.org/level/tileX/tileY.png"
+						   TValue="string"></MapsLayer>
+			</MapsLayers>
+			<MapsCenterPosition Latitude="50.041187" Longitude="21.999121"></MapsCenterPosition>
+		</SfMaps>
+	</MudItem>
+</MudGrid>

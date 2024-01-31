@@ -1,0 +1,114 @@
+﻿@page "/Customers"
+@rendermode InteractiveAuto
+
+<MudDataGrid CommittedItemChanges="customer => RowEdited(customer)"
+			 EditMode="DataGridEditMode.Form"
+			 EditTrigger="DataGridEditTrigger.Manual"
+			 Filterable="true"
+			 Items="@Elements"
+			 ReadOnly="false"
+			 SortMode="SortMode.Single"
+			 T="CustomerElement"
+			 Virtualize="true">
+	<ToolBarContent>
+		<MudButton Color="Color.Primary"
+				   OnClick="() => AddRow()"
+				   Size="Size.Medium"
+				   StartIcon="@Icons.Material.Filled.Add"
+				   Variant="Variant.Filled">
+			Dodaj
+		</MudButton>
+	</ToolBarContent>
+	<Columns>
+		<PropertyColumn IsEditable="false"
+						Property="x => x.Id"
+						Title="Id"/>
+		<PropertyColumn Property="x => x.FirstName"
+						Title="Imię"/>
+		<PropertyColumn Property="x => x.LastName"
+						Title="Nazwisko"/>
+		<TemplateColumn CellClass="d-flex justify-end"
+						Filterable="false"
+						Sortable="false">
+			<CellTemplate>
+				<MudIconButton Icon="@Icons.Material.Filled.Edit"
+							   OnClick="@context.Actions.StartEditingItemAsync"
+							   Size="Size.Small"/>
+				<MudIconButton Icon="@Icons.Material.Filled.Delete"
+							   OnClick="@(() => RowDeleted(context.Item))"
+							   Size="Size.Small"/>
+			</CellTemplate>
+		</TemplateColumn>
+	</Columns>
+</MudDataGrid>
+
+@code
+{
+	[Inject]
+	private ApiClient ApiClient { get; set; } = null!;
+
+	private List<CustomerElement> Elements { get; set; } = [];
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (!firstRender)
+		{
+			return;
+		}
+
+		Elements = await ApiClient.Request("customers")
+			.GetAsync()
+			.ReceiveJson<List<CustomerElement>>();
+
+		StateHasChanged();
+	}
+
+	private async Task RowEdited(CustomerElement customer)
+	{
+		if (customer.Saved)
+		{
+			await ApiClient.Request("customers")
+				.AppendPathSegment(customer.Id)
+				.PutJsonAsync(new
+				{
+					customer.FirstName,
+					customer.LastName
+				});
+			return;
+		}
+
+		var response = await ApiClient.Request("customers")
+			.PostJsonAsync(new
+			{
+				customer.FirstName,
+				customer.LastName
+			});
+
+		var newCustomer = await ApiClient.Request(response.Headers.FirstOrDefault("Location"))
+			.GetAsync()
+			.ReceiveJson<CustomerElement>();
+
+		var customerIndex = Elements.IndexOf(customer);
+		Elements[customerIndex] = newCustomer;
+	}
+
+	private async Task RowDeleted(CustomerElement customer)
+	{
+		Elements.Remove(customer);
+
+		if (customer.Saved)
+		{
+			await ApiClient.Request("customers")
+				.AppendPathSegment(customer.Id)
+				.DeleteAsync();
+		}
+	}
+
+	private void AddRow()
+	{
+		Elements.Add(new()
+		{
+			Saved = false
+		});
+	}
+}

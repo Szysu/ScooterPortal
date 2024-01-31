@@ -11,4 +11,13 @@
         <ProjectReference Include="..\ScooterPortal.ServiceDefaults\ScooterPortal.ServiceDefaults.csproj"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Blazored.LocalStorage" Version="4.4.0" />
+      <PackageReference Include="FluentValidation" Version="11.9.0" />
+      <PackageReference Include="Flurl.Http" Version="4.0.2" />
+      <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.1" />
+      <PackageReference Include="MudBlazor" Version="6.15.0" />
+      <PackageReference Include="Syncfusion.Blazor.Maps" Version="24.2.3" />
+    </ItemGroup>
+
 </Project>

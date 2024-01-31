@@ -35,6 +35,6 @@ public class CreateRentalEndpoint : Endpoint<CreateRentalRequest>
         DbContext.Rentals.Add(rental);
         DbContext.SaveChanges();
 
-        return SendCreatedAtAsync<GetRentalDetailsEndpoint>(rental.Id, null, cancellation: ct);
+        return SendCreatedAtAsync<GetRentalDetailsEndpoint>(new RouteValueDictionary { { "id", rental.Id } }, null, cancellation: ct);
     }
 }

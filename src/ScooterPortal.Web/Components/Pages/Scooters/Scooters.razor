@@ -1,0 +1,118 @@
+﻿@page "/Scooters"
+@rendermode InteractiveAuto
+
+<MudDataGrid CommittedItemChanges="scooter => RowEdited(scooter)"
+			 EditMode="DataGridEditMode.Form"
+			 EditTrigger="DataGridEditTrigger.Manual"
+			 Filterable="true"
+			 Items="@Elements"
+			 ReadOnly="false"
+			 SortMode="SortMode.Single"
+			 T="ScooterElement"
+			 Virtualize="true">
+	<ToolBarContent>
+		<MudButton Color="Color.Primary"
+				   OnClick="() => AddRow()"
+				   Size="Size.Medium"
+				   StartIcon="@Icons.Material.Filled.Add"
+				   Variant="Variant.Filled">
+			Dodaj
+		</MudButton>
+	</ToolBarContent>
+	<Columns>
+		<PropertyColumn IsEditable="false"
+						Property="x => x.Id"
+						Title="Id"/>
+		<PropertyColumn Property="x => x.Model"
+						Title="Model"/>
+		<PropertyColumn Property="x => x.Manufacturer"
+						Title="Producent"/>
+		<PropertyColumn Property="x => x.BatteryLevel"
+						Title="Poziom baterii"/>
+		<TemplateColumn CellClass="d-flex justify-end"
+						Filterable="false"
+						Sortable="false">
+			<CellTemplate>
+				<MudIconButton Icon="@Icons.Material.Filled.Edit"
+							   OnClick="@context.Actions.StartEditingItemAsync"
+							   Size="Size.Small"/>
+				<MudIconButton Icon="@Icons.Material.Filled.Delete"
+							   OnClick="@(() => RowDeleted(context.Item))"
+							   Size="Size.Small"/>
+			</CellTemplate>
+		</TemplateColumn>
+	</Columns>
+</MudDataGrid>
+
+@code
+{
+	[Inject]
+	private ApiClient ApiClient { get; set; } = null!;
+
+	private List<ScooterElement> Elements { get; set; } = [];
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (!firstRender)
+		{
+			return;
+		}
+
+		Elements = await ApiClient.Request("scooters")
+			.GetAsync()
+			.ReceiveJson<List<ScooterElement>>();
+
+		StateHasChanged();
+	}
+
+	private async Task RowEdited(ScooterElement scooter)
+	{
+		if (scooter.Saved)
+		{
+			await ApiClient.Request("scooters")
+				.AppendPathSegment(scooter.Id)
+				.PutJsonAsync(new
+				{
+					scooter.Model,
+					scooter.Manufacturer,
+					scooter.BatteryLevel
+				});
+			return;
+		}
+
+		var response = await ApiClient.Request("scooters")
+			.PostJsonAsync(new
+			{
+				scooter.Model,
+				scooter.Manufacturer,
+				scooter.BatteryLevel
+			});
+
+		var newScooter = await ApiClient.Request(response.Headers.FirstOrDefault("Location"))
+			.GetAsync()
+			.ReceiveJson<ScooterElement>();
+
+		var scooterIndex = Elements.IndexOf(scooter);
+		Elements[scooterIndex] = newScooter;
+	}
+
+	private async Task RowDeleted(ScooterElement scooter)
+	{
+		Elements.Remove(scooter);
+
+		if (scooter.Saved)
+		{
+			await ApiClient.Request("scooters")
+				.AppendPathSegment(scooter.Id)
+				.DeleteAsync();
+		}
+	}
+
+	private void AddRow()
+	{
+		Elements.Add(new()
+		{
+			Saved = false
+		});
+	}
+}

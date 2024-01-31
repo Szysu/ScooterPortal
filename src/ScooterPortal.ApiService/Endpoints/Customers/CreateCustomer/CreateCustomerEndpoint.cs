@@ -23,6 +23,6 @@ public class CreateCustomerEndpoint : Endpoint<CreateCustomerRequest>
         DbContext.Customers.Add(customer);
         DbContext.SaveChanges();
 
-        return SendCreatedAtAsync<GetCustomerDetailsEndpoint>(customer.Id, null, cancellation: ct);
+        return SendCreatedAtAsync<GetCustomerDetailsEndpoint>(new RouteValueDictionary { { "id", customer.Id } }, null, cancellation: ct);
     }
 }

@@ -1,0 +1,87 @@
+﻿@page "/Login"
+@rendermode InteractiveServer
+
+<MudContainer MaxWidth="MaxWidth.Small">
+	<MudCard>
+		<MudForm Model="@_model"
+				 @ref="@_form"
+				 Validation="@(_validator.ValidateValue)"
+				 ValidationDelay="0">
+			<MudCardContent>
+				<MudTextField @bind-Value="_model.Username"
+							  For="@(() => _model.Username)"
+							  Immediate="true"
+							  Label="Login"/>
+				<MudTextField @bind-Value="_model.Password"
+							  For="@(() => _model.Password)"
+							  Immediate="true"
+							  Label="Hasło"/>
+			</MudCardContent>
+			<MudCardActions>
+				<MudButton ButtonType="ButtonType.Button"
+						   Color="Color.Primary"
+						   OnClick="Submit"
+						   Variant="Variant.Filled">
+					@if (_processing)
+					{
+						<MudProgressCircular Indeterminate="true"
+											 Size="Size.Small"/>
+					}
+					else
+					{
+						<MudText>Zaloguj się</MudText>
+					}
+				</MudButton>
+			</MudCardActions>
+		</MudForm>
+	</MudCard>
+</MudContainer>
+
+@code {
+
+	[Inject]
+	private ISnackbar Snackbar { get; set; } = null!;
+
+	[Inject]
+	private AuthorizeService AuthService { get; set; } = null!;
+
+	[Inject]
+	private NavigationManager NavManager { get; set; } = null!;
+	
+	[Inject]
+	private ApiClient ApiClient { get; set; } = null!;
+
+	private readonly LoginForm _model = new();
+	private readonly LoginFormValidator _validator = new();
+
+	private MudForm _form = null!;
+	private bool _processing;
+
+	private async Task Submit()
+	{
+		_processing = true;
+
+		try
+		{
+			if (await AuthService.Login(ApiClient.HttpClient, _model.Username, _model.Password))
+			{
+				NavManager.NavigateTo("/");
+				return;
+			}
+		
+			Snackbar.Add("Nieprawidłowy login lub hasło", Severity.Error, options => { options.ShowCloseIcon = false; });
+		}
+		finally
+		{
+			_processing = false;
+		}
+	}
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (await AuthService.IsLoggedIn())
+		{
+			NavManager.NavigateTo("/");
+		}
+	}
+}

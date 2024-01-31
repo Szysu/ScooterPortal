@@ -1,0 +1,136 @@
+﻿@page "/Rentals"
+@rendermode InteractiveAuto
+
+<MudDataGrid CommittedItemChanges="rental => RowEdited(rental)"
+			 EditMode="DataGridEditMode.Form"
+			 EditTrigger="DataGridEditTrigger.Manual"
+			 Filterable="true"
+			 Items="@Elements"
+			 ReadOnly="false"
+			 SortMode="SortMode.Single"
+			 T="RentalElement"
+			 Virtualize="true">
+	<ToolBarContent>
+		<MudButton Color="Color.Primary"
+				   OnClick="() => AddRow()"
+				   Size="Size.Medium"
+				   StartIcon="@Icons.Material.Filled.Add"
+				   Variant="Variant.Filled">
+			Dodaj
+		</MudButton>
+	</ToolBarContent>
+	<Columns>
+		<PropertyColumn IsEditable="false"
+						Property="x => x.Id"
+						Title="Id"/>
+		<PropertyColumn Property="x => x.ScooterId"
+						Title="Id pojazdu"/>
+		<PropertyColumn Property="x => x.CustomerId"
+						Title="Id klienta"/>
+		<PropertyColumn Property="x => x.StartDate"
+						Title="Data rozpoczęcia">
+			<EditTemplate>
+				<MudDatePicker @bind-Date="context.Item.StartDate"
+							   Required
+							   Label="Data rozpoczęcia"/>
+				<MudTimePicker @bind-Time="context.Item.StartTime"
+							   Required
+							   Label="Czas rozpoczęcia"/>
+			</EditTemplate>
+		</PropertyColumn>
+		<PropertyColumn Property="x => x.EndDate"
+						Title="Data zakończenia">
+			<EditTemplate>
+				<MudDatePicker @bind-Date="context.Item.EndDate" Label="Data zakończenia"/>
+				<MudTimePicker @bind-Time="context.Item.EndTime" Label="Czas zakończenia"/>
+			</EditTemplate>
+		</PropertyColumn>
+		<TemplateColumn CellClass="d-flex justify-end"
+						Filterable="false"
+						Sortable="false">
+			<CellTemplate>
+				<MudIconButton Icon="@Icons.Material.Filled.Edit"
+							   OnClick="@context.Actions.StartEditingItemAsync"
+							   Size="Size.Small"/>
+				<MudIconButton Icon="@Icons.Material.Filled.Delete"
+							   OnClick="@(() => RowDeleted(context.Item))"
+							   Size="Size.Small"/>
+			</CellTemplate>
+		</TemplateColumn>
+	</Columns>
+</MudDataGrid>
+
+@code
+{
+	[Inject]
+	private ApiClient ApiClient { get; set; } = null!;
+
+	private List<RentalElement> Elements { get; set; } = [];
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (!firstRender)
+		{
+			return;
+		}
+
+		Elements = await ApiClient.Request("rentals")
+			.GetAsync()
+			.ReceiveJson<List<RentalElement>>();
+
+		StateHasChanged();
+	}
+
+	private async Task RowEdited(RentalElement rental)
+	{
+		if (rental.Saved)
+		{
+			await ApiClient.Request("rentals")
+				.AppendPathSegment(rental.Id)
+				.PutJsonAsync(new
+				{
+					rental.ScooterId,
+					rental.CustomerId,
+					StartDate = rental.StartDate + rental.StartTime,
+					EndDate = rental.EndDate + rental.EndTime
+				});
+			return;
+		}
+
+		var response = await ApiClient.Request("rentals")
+			.PostJsonAsync(new
+			{
+				rental.ScooterId,
+				rental.CustomerId,
+				StartDate = rental.StartDate + rental.StartTime,
+				EndDate = rental.EndDate + rental.EndTime
+			});
+
+		var newRental = await ApiClient.Request(response.Headers.FirstOrDefault("Location"))
+			.GetAsync()
+			.ReceiveJson<RentalElement>();
+
+		var rentalIndex = Elements.IndexOf(rental);
+		Elements[rentalIndex] = newRental;
+	}
+
+	private async Task RowDeleted(RentalElement rental)
+	{
+		Elements.Remove(rental);
+
+		if (rental.Saved)
+		{
+			await ApiClient.Request("rentals")
+				.AppendPathSegment(rental.Id)
+				.DeleteAsync();
+		}
+	}
+
+	private void AddRow()
+	{
+		Elements.Add(new()
+		{
+			Saved = false
+		});
+	}
+}
