@@ -1,3 +1,4 @@
+using BlazorDownloadFile;
 using Blazored.LocalStorage;
 using MudBlazor;
 using MudBlazor.Services;
@@ -32,6 +33,7 @@ builder.Services.AddHttpClient<ApiClient>(client => client.BaseAddress = new("ht
 
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddSyncfusionBlazor();
+builder.Services.AddBlazorDownloadFile();
 
 var app = builder.Build();
 

@@ -1,4 +1,5 @@
 ﻿@page "/Customers"
+@using BlazorDownloadFile
 @rendermode InteractiveAuto
 
 <MudDataGrid CommittedItemChanges="customer => RowEdited(customer)"
@@ -17,6 +18,13 @@
 				   StartIcon="@Icons.Material.Filled.Add"
 				   Variant="Variant.Filled">
 			Dodaj
+		</MudButton>
+		<MudButton Color="Color.Primary"
+				   OnClick="() => DownloadCsv()"
+				   Size="Size.Medium"
+				   StartIcon="@Icons.Material.Filled.Download"
+				   Variant="Variant.Filled">
+			Pobierz CSV
 		</MudButton>
 	</ToolBarContent>
 	<Columns>
@@ -46,6 +54,9 @@
 {
 	[Inject]
 	private ApiClient ApiClient { get; set; } = null!;
+
+	[Inject]
+	private IBlazorDownloadFileService DownloadService { get; set; } = null!;
 
 	private List<CustomerElement> Elements { get; set; } = [];
 
@@ -110,5 +121,11 @@
 		{
 			Saved = false
 		});
+	}
+
+	private async Task DownloadCsv()
+	{
+		var stream = await ApiClient.Request("customers/export-to-csv").PostAsync().ReceiveStream();
+		await DownloadService.DownloadFile("customers.csv", stream, "text/csv");
 	}
 }
